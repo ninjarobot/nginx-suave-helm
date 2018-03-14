@@ -1,0 +1,78 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "nginx-suave.fullname" . }}-littlesuave
+  labels:
+    app: {{ template "nginx-suave.fullname" . }}-littlesuave
+    chart: {{ template "nginx-suave.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "nginx-suave.fullname" . }}-littlesuave
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: {{ template "nginx-suave.fullname" . }}-littlesuave
+        release: {{ .Release.Name }}
+        tier: backend
+    spec:
+      containers:
+        - name: {{ template "nginx-suave.fullname" . }}-littlesuave
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "nginx-suave.fullname" . }}-nginx
+  labels:
+    app: {{ template "nginx-suave.fullname" . }}-nginx
+    chart: {{ template "nginx-suave.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "nginx-suave.fullname" . }}-nginx
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: {{ template "nginx-suave.fullname" . }}-nginx
+        release: {{ .Release.Name }}
+        tier: frontend
+    spec:
+      containers:
+        - name: {{ template "nginx-suave.fullname" . }}-nginx
+          image: "nginx:latest"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/
+      volumes:
+      - name: nginx-config
+        configMap: 
+          name: {{ template "nginx-suave.fullname" . }}

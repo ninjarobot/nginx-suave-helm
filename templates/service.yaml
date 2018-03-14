@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "nginx-suave.fullname" . }}-littlesuave
+  labels:
+    app: {{ template "nginx-suave.fullname" . }}-littlesuave
+    chart: {{ template "nginx-suave.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.littlesuaveService.type }}
+  ports:
+    - port: {{ .Values.littlesuaveService.port }}
+      targetPort: {{ .Values.littlesuaveService.port }}
+      protocol: TCP
+      name: {{ .Values.littlesuaveService.name }}
+  selector:
+    app: {{ template "nginx-suave.fullname" . }}-littlesuave
+    release: {{ .Release.Name }}
+    tier: backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "nginx-suave.fullname" . }}-nginx
+  labels:
+    app: {{ template "nginx-suave.fullname" . }}-nginx
+    chart: {{ template "nginx-suave.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.nginxService.type }}
+  ports:
+    - port: {{ .Values.nginxService.port }}
+      targetPort: {{ .Values.nginxService.port }}
+      protocol: TCP
+      name: {{ .Values.nginxService.name }}
+  selector:
+    app: {{ template "nginx-suave.fullname" . }}-nginx
+    release: {{ .Release.Name }}
+    tier: frontend
