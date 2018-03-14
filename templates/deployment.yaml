@@ -1,9 +1,9 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "nginx-suave.fullname" . }}-littlesuave
+  name: {{ template "nginx-suave.fullname" . }}
   labels:
-    app: {{ template "nginx-suave.fullname" . }}-littlesuave
+    app: {{ template "nginx-suave.fullname" . }}
     chart: {{ template "nginx-suave.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -11,57 +11,31 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "nginx-suave.fullname" . }}-littlesuave
-      tier: backend
+      app: {{ template "nginx-suave.fullname" . }}
   template:
     metadata:
       labels:
-        app: {{ template "nginx-suave.fullname" . }}-littlesuave
+        app: {{ template "nginx-suave.fullname" . }}
         release: {{ .Release.Name }}
-        tier: backend
     spec:
       containers:
         - name: {{ template "nginx-suave.fullname" . }}-littlesuave
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
+            - name: apphttp
               containerPort: 8080
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
-              port: http
+              port: apphttp
             initialDelaySeconds: 5
           readinessProbe:
             httpGet:
               path: /
-              port: http
+              port: apphttp
             initialDelaySeconds: 5
----
-apiVersion: apps/v1beta2
-kind: Deployment
-metadata:
-  name: {{ template "nginx-suave.fullname" . }}-nginx
-  labels:
-    app: {{ template "nginx-suave.fullname" . }}-nginx
-    chart: {{ template "nginx-suave.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-spec:
-  replicas: {{ .Values.replicaCount }}
-  selector:
-    matchLabels:
-      app: {{ template "nginx-suave.fullname" . }}-nginx
-      tier: frontend
-  template:
-    metadata:
-      labels:
-        app: {{ template "nginx-suave.fullname" . }}-nginx
-        release: {{ .Release.Name }}
-        tier: frontend
-    spec:
-      containers:
         - name: {{ template "nginx-suave.fullname" . }}-nginx
           image: "nginx:latest"
           imagePullPolicy: {{ .Values.image.pullPolicy }}

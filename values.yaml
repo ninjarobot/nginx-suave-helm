@@ -13,10 +13,6 @@ nginxService:
   name: nginx
   type: NodePort
   port: 80
-littlesuaveService:
-  name: littlesuave
-  type: ClusterIP
-  port: 8080
 
 ingress:
   enabled: false
