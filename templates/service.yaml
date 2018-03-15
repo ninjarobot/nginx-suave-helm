@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "nginx-suave.fullname" . }}-nginx
+  name: {{ template "nginx-suave.fullname" . }}
   labels:
-    app: {{ template "nginx-suave.fullname" . }}-nginx
+    app: {{ template "nginx-suave.fullname" . }}
     chart: {{ template "nginx-suave.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: {{ .Values.nginxService.type }}
+  type: {{ .Values.frontendService.type }}
   ports:
-    - port: {{ .Values.nginxService.port }}
-      targetPort: {{ .Values.nginxService.port }}
+    - port: {{ .Values.frontendService.port }}
+      targetPort: {{ .Values.frontendService.port }}
       protocol: TCP
-      name: {{ .Values.nginxService.name }}
+      name: {{ .Values.frontendService.name }}
   selector:
     app: {{ template "nginx-suave.fullname" . }}
     release: {{ .Release.Name }}

@@ -19,9 +19,9 @@ spec:
         release: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ template "nginx-suave.fullname" . }}-littlesuave
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: {{ .Chart.Name }}-{{ .Values.backendImage.name }}
+          image: "{{ .Values.backendImage.repository }}:{{ .Values.backendImage.tag }}"
+          imagePullPolicy: {{ .Values.backendImage.pullPolicy }}
           ports:
             - name: apphttp
               containerPort: 8080
@@ -36,9 +36,9 @@ spec:
               path: /
               port: apphttp
             initialDelaySeconds: 5
-        - name: {{ template "nginx-suave.fullname" . }}-nginx
-          image: "nginx:latest"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: {{ .Chart.Name }}-{{ .Values.frontendImage.name }}
+          image: "{{ .Values.frontendImage.repository }}:{{ .Values.frontendImage.tag }}"
+          imagePullPolicy: {{ .Values.frontendImage.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
