@@ -15,6 +15,10 @@ data:
             location /api {
                 proxy_pass http://littlesuave;
             }
+            location /healthcheck {
+                access_log off;
+                return 200 "OK";
+            }
         }
     }
 ---
