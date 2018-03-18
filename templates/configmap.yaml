@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "nginx-suave.fullname" . }}-conf
+data:
+  nginx.conf: |-
+    events { }
+    http {
+        upstream littlesuave {
+            server 127.0.0.1:8080;
+        }
+
+        server {
+            root /usr/share/nginx/html;
+            location /api {
+                proxy_pass http://littlesuave;
+            }
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "nginx-suave.fullname" . }}-content
+data:
+  index.html: |-
+    <html>
+      <head>
+        <title>{{ .Chart.Name }}</title>
+      </head>
+      <body>
+        <h1>Welcome to {{ .Chart.Name }}</h1>
+        <p>API available at <a href="/api">/api</a>.</p>
+      </body>
+    </html>
